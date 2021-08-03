@@ -1,4 +1,4 @@
-use db125;
+
 create table employee(
 Id int,
 Name varchar(30),
