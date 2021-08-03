@@ -1,0 +1,243 @@
+use db125;
+create table employee(
+Id int,
+Name varchar(30),
+Age int,
+Salary int,
+Gender varchar(20),
+Department varchar(30),
+primary key (Id)
+)
+
+select * from employee
+
+insert into employee values(1,'kalpit jindal',21,360000,'Male','Common pool'),
+(2,'jatin sharma',29,360000,'Male','CSD'),
+(3,'Harsh singh',35,750000,'Male','Software'),
+(4,'pallavi arora',23,300000,'Female','Common pool'),
+(5,'Ruchi sharma',27,800000,'Female','software'),
+(6,'Suresh garg',47,260000,'Male','Health')
+
+
+select * from employee
+
+select distinct gender from employee
+
+select * from employee where gender='female' and salary > 300000
+
+select * from employee where gender='female' or salary > 300000
+
+select * from employee where not gender='female'    -- not equal to female
+
+select * from employee where name like 'j%'   -- start with j
+
+select * from employee where name like '%l'   -- end with l
+
+select * from employee where name like '_a%'  -- second word is a 
+
+select * from employee where age between 21 and 29 -- age will be only [21,22,23,...,29]
+
+select min(salary) as minimum,max(salary) as maximum,avg(salary) as average,count(*) as count from  employee
+
+select count(*) from employee where gender='female'
+
+select LTRIM('    kalpit jindal')
+
+select RTRIM('kalpit jindal    ')
+
+select REVERSE('ladnij tiplak')
+
+select UPPER('kalpit jindal')
+
+select LOWER('KALPIT JINDAL')
+
+select SUBSTRING('My name is kalpit jindal',12,13)  -- first number starting index -- second is length , index start from 1 
+
+select * from employee order by age  -- by default set ascending order
+
+select * from employee order by age desc  -- use desc for descending order
+
+select top 5 * from employee
+
+select top 5 * from employee order by age -- order by age in asc mode and retrieve top 5 rows
+
+select department,count(*) as duplicacy from employee group by Department
+
+select avg(salary)as 'average salary',gender,count(*) as 'count of gender',avg(age)as 'average age' from employee group by gender
+
+select avg(age) as 'average age ',department from employee group by department order by avg(age) desc
+
+select avg(salary) as 'average salary',department from employee group by department having avg(salary) > 300000
+
+update employee set age=53 where name='jatin sharma'
+
+delete from employee where age>50
+
+-- truncate table emplyoee
+
+create table department(
+id int,
+department varchar(30),
+location varchar(30)
+primary key (id)
+)
+
+insert into department values(1,'Application','India'),
+(2,'health','Austrailia'),
+(3,'Software','USA'),
+(4,'CSD','RUSSIA'),
+(5,'Common pool','China'),
+(6,'CSD','Nepal')
+
+
+select * from department
+select * from employee
+select E.id,name,age,salary,gender,D.department,location from employee E inner join department D on E.Department=D.department  -- common part only
+
+select E.id,name,age,salary,gender,D.department,location from employee E left join department D on E.Department=D.department  -- left complete and common part also
+
+select E.id,name,age,salary,gender,D.department,location from employee E right join department D on E.Department=D.department -- right complete and common part also
+
+select E.id,name,age,salary,gender,D.department,location from employee E full join department D on E.Department=D.department  --take all values
+
+
+------------------task1--------------------------------
+
+update employee set age=age+10 from employee E join department D on E.department=D.department where D.location='USA'
+
+select * from employee
+
+
+delete  from  employee from employee E join department D on E.Department=D.department where D.location='USA'
+
+select * from employee
+
+----------------------------
+create table student1(
+id int,
+name varchar(10),
+marks int
+primary key (id)
+)
+create table student2(
+id int,
+name varchar(10),
+marks int
+primary key (id)
+)
+
+insert into student1 values (1,'kalpit',85),(2,'mohit',80),(3,'rahul',89),(4,'rajesh',92)
+insert into student2 values (1,'kamlesh',94),(2,'mohit',80),(3,'ajay',73),(4,'dharm',87)
+
+
+select * from student1        
+union
+select * from student2                -- add both tables and remove duplicate row
+
+
+select * from student1
+union all
+select * from student2    -- show all rows without removing duplicate rows
+
+
+select * from student1
+except
+select * from student2       -- show only  those rows(first table) which is not common with second table
+
+select * from student2  
+except
+select * from student1      -- show only  those rows(second table) which is not common with first table
+
+
+select * from student1
+intersect 
+select * from student2        -- show only common rows which is common rows in both the tables
+
+
+
+create view female_employees as
+select * from employee where gender='female'
+
+select * from female_employees
+
+
+drop view female_employees
+
+
+alter table employee add dob date   -- add new  column
+
+select * from employee
+
+alter table employee drop column dob   -- drop column
+
+select * into employee2 from employee   -- copy one table into another table 
+
+select * from employee2
+
+merge employee2 as T
+using employee as S
+on T.id=S.id
+when matched
+then update set t.salary=150000,t.age=34
+when not matched by target
+then insert (id,name,age,salary,gender,department) values(7,'jishan',56,900000,'Male','application')
+when not matched by source
+then delete ;
+
+
+select * from employee
+select * from employee2
+
+update employee2 set id=8 where department='csd'
+
+
+create function add_one(@num as int)
+returns int 
+as 
+begin
+return (@num+1)
+end                                  --create a function in sql using query
+
+select dbo.add_one(23)                -- this is method of calling of function in sql
+
+
+
+------create function thats takes a gender as a argument and return all selected rows from employee table
+
+create FUNCTION find_gender(@gender as varchar(30))
+returns table
+as
+return (
+select * from employee where gender=@gender
+)
+select * from dbo.find_gender('male')
+
+ drop function dbo.find_gender     -- use to drop  function in sql
+
+
+ create table #student(
+ id int,
+ name varchar(30),
+ roll int
+ )    -- # is used to temporary table in ssql
+
+ insert into #student values(1,'surya',35),(2,'salma',31)
+
+ select * from #student
+
+
+ select 
+ case
+ when 10>20 then '10 is greater than 20'
+ when 10<20 then '10 is less than 20'
+ else '10 is equal to 20'
+end
+
+select *,grade=
+case
+when salary<300000 then 'C'
+when salary>200000 and salary<500000 then 'B'
+else 'A'
+end
+from employee    -- is used to create a new column according to cases
+
